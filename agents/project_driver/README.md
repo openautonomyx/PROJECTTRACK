@@ -10,6 +10,7 @@ AI-native provider-neutral project orchestration runtime.
 - approval-first publishing
 - browser chat interface
 - generic project-manager API
+- CLI runtime
 - GitHub automation adapter
 
 ## Architecture
@@ -64,6 +65,26 @@ API base:
 http://localhost:8090
 ```
 
+## Run CLI
+
+```bash
+cd agents/project_driver
+export OPENAI_API_KEY=YOUR_KEY
+python cli.py "Plan the next MVP sprint"
+```
+
+### JSON output
+
+```bash
+python cli.py "Plan the next MVP sprint" --json
+```
+
+### Publish artifacts
+
+```bash
+python cli.py "Plan the next MVP sprint" --publish
+```
+
 ## API Endpoints
 
 ### Health
@@ -76,14 +97,6 @@ GET /health
 
 ```text
 POST /plan
-```
-
-Example request:
-
-```json
-{
-  "task": "Plan the MVP architecture and next sprint"
-}
 ```
 
 ### Runtime Status
