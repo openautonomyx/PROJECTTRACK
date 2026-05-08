@@ -1,7 +1,11 @@
 from openai import OpenAI
 import os
 import yaml
+import json
 from pathlib import Path
+
+from core_models import ProjectPlan
+from state_store import StateStore
 
 
 base = Path(__file__).resolve().parent
@@ -12,6 +16,7 @@ with open(config_path, 'r') as f:
 
 
 client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+store = StateStore()
 
 
 SYSTEM_PROMPT = f'''
@@ -31,6 +36,16 @@ Your responsibilities:
 You are NOT tied to GitHub, GitLab, Jira, Linear, or any specific provider.
 
 You operate on generic project-management primitives.
+
+Always return valid structured JSON matching this schema:
+
+{{
+  "summary": "string",
+  "milestones": [],
+  "risks": [],
+  "decisions": [],
+  "next_actions": []
+}}
 '''
 
 
@@ -49,4 +64,25 @@ def generate_plan(task: str):
         ],
     )
 
-    return response.output_text
+    raw = response.output_text
+
+    try:
+        parsed = json.loads(raw)
+        plan = ProjectPlan(**parsed)
+
+        store.save_plan(plan.model_dump())
+
+        return plan
+
+    except Exception:
+        fallback = ProjectPlan(
+            summary=raw,
+            milestones=[],
+            risks=[],
+            decisions=[],
+            next_actions=[],
+        )
+
+        store.save_plan(fallback.model_dump())
+
+        return fallback
