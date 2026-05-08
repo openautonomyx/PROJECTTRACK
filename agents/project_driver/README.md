@@ -8,6 +8,7 @@ AI-native provider-neutral project orchestration runtime.
 - structured ProjectPlan generation
 - local project state persistence
 - approval-first publishing
+- dashboard UI
 - browser chat interface
 - generic project-manager API
 - CLI runtime
@@ -27,80 +28,44 @@ Approval-first Publisher
 Optional Adapters
 ```
 
-## Setup
-
-Add:
-
-```text
-OPENAI_API_KEY
-```
-
-## Run Browser Chat
+## Run Dashboard
 
 ```bash
 cd agents/project_driver
 pip install -r requirements.txt
 export OPENAI_API_KEY=YOUR_KEY
-uvicorn chat_server:app --host 0.0.0.0 --port 8080 --reload
+uvicorn dashboard_server:app --host 0.0.0.0 --port 8081 --reload
 ```
 
 Open:
 
 ```text
-http://localhost:8080
+http://localhost:8081
 ```
 
-## Run Project Manager API
+## Dashboard Features
+
+- Overview dashboard
+- Generate plans
+- Approval queue
+- Project snapshots
+- Agent chat
+- Runtime visibility
+
+## Run Browser Chat
 
 ```bash
-cd agents/project_driver
-pip install -r requirements.txt
-export OPENAI_API_KEY=YOUR_KEY
-uvicorn api_server:app --host 0.0.0.0 --port 8090 --reload
+uvicorn chat_server:app --host 0.0.0.0 --port 8080 --reload
 ```
 
-API base:
+## Run API
 
-```text
-http://localhost:8090
+```bash
+uvicorn api_server:app --host 0.0.0.0 --port 8090 --reload
 ```
 
 ## Run CLI
 
 ```bash
-cd agents/project_driver
-export OPENAI_API_KEY=YOUR_KEY
 python cli.py "Plan the next MVP sprint"
-```
-
-### JSON output
-
-```bash
-python cli.py "Plan the next MVP sprint" --json
-```
-
-### Publish artifacts
-
-```bash
-python cli.py "Plan the next MVP sprint" --publish
-```
-
-## API Endpoints
-
-### Health
-
-```text
-GET /health
-```
-
-### Generate Project Plan
-
-```text
-POST /plan
-```
-
-### Runtime Status
-
-```text
-GET /status
 ```
