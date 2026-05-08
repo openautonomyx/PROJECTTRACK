@@ -1,6 +1,8 @@
 from openai import OpenAI
 import yaml
 import os
+import json
+import urllib.request
 from pathlib import Path
 
 
@@ -20,7 +22,7 @@ def run(task: str):
         input=[
             {
                 'role': 'system',
-                'content': f'''You are the PROJECTTRACK Project Driver Agent.\n\nProject context:\n{project}'''
+                'content': f'''You are the PROJECTTRACK Project Driver Agent.\n\nProject context:\n{project}\n\nBe concise, structured, and actionable.'''
             },
             {
                 'role': 'user',
@@ -32,10 +34,41 @@ def run(task: str):
     return response.output_text
 
 
+def post_issue_comment(body: str):
+    token = os.environ.get('GITHUB_TOKEN')
+    repo = os.environ.get('GITHUB_REPOSITORY')
+    issue_number = os.environ.get('GITHUB_ISSUE_NUMBER')
+
+    if not token or not repo or not issue_number:
+        return
+
+    url = f'https://api.github.com/repos/{repo}/issues/{issue_number}/comments'
+    payload = json.dumps({'body': body}).encode('utf-8')
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        headers={
+            'Authorization': f'Bearer {token}',
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Content-Type': 'application/json',
+        },
+        method='POST',
+    )
+
+    with urllib.request.urlopen(req) as res:
+        res.read()
+
+
 if __name__ == '__main__':
     task = os.environ.get(
         'PROJECT_DRIVER_TASK',
         'Plan the next implementation milestone for PROJECTTRACK.'
     )
 
-    print(run(task))
+    output = run(task)
+    print(output)
+
+    post_issue_comment(
+        f'''## PROJECTTRACK Project Driver Agent\n\n{output}\n\n---\n_Automated by Project Driver._'''
+    )
