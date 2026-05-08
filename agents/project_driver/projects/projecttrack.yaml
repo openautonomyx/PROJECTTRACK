@@ -1,0 +1,26 @@
+name: projecttrack
+category: ai-native project tracking and delivery orchestration
+positioning: >
+  composable, self-hostable, cloud-native project tracking platform
+  with AI-driven software delivery orchestration.
+
+architecture:
+  - github
+  - fastapi
+  - openai
+  - kubernetes
+  - postgres
+
+principles:
+  - composable
+  - self-hostable
+  - open-core
+  - cloud-native
+  - automation-first
+
+responsibilities:
+  - roadmap planning
+  - sprint planning
+  - implementation decomposition
+  - delivery tracking
+  - engineering governance
