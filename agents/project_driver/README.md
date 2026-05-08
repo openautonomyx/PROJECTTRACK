@@ -1,15 +1,30 @@
 # PROJECTTRACK Project Driver
 
-AI-native project orchestration agent for PROJECTTRACK.
+AI-native provider-neutral project orchestration runtime.
 
 ## Features
 
-- GitHub issue automation
-- roadmap planning
-- sprint planning
-- implementation decomposition
-- architecture guidance
+- provider-neutral planning engine
+- structured ProjectPlan generation
+- local project state persistence
+- approval-first publishing
 - browser chat interface
+- generic project-manager API
+- GitHub automation adapter
+
+## Architecture
+
+```text
+Planning Engine
+        ↓
+Structured ProjectPlan
+        ↓
+State Store
+        ↓
+Approval-first Publisher
+        ↓
+Optional Adapters
+```
 
 ## Setup
 
@@ -17,12 +32,6 @@ Add:
 
 ```text
 OPENAI_API_KEY
-```
-
-to:
-
-```text
-GitHub → Settings → Secrets and variables → Actions
 ```
 
 ## Run Browser Chat
@@ -40,11 +49,45 @@ Open:
 http://localhost:8080
 ```
 
-## Example prompts
+## Run Project Manager API
 
-- Plan the next sprint
-- Review the architecture
-- Break the MVP into milestones
-- Recommend GitHub issues
-- Design the governance model
-- Review open-core boundaries
+```bash
+cd agents/project_driver
+pip install -r requirements.txt
+export OPENAI_API_KEY=YOUR_KEY
+uvicorn api_server:app --host 0.0.0.0 --port 8090 --reload
+```
+
+API base:
+
+```text
+http://localhost:8090
+```
+
+## API Endpoints
+
+### Health
+
+```text
+GET /health
+```
+
+### Generate Project Plan
+
+```text
+POST /plan
+```
+
+Example request:
+
+```json
+{
+  "task": "Plan the MVP architecture and next sprint"
+}
+```
+
+### Runtime Status
+
+```text
+GET /status
+```
