@@ -17,12 +17,13 @@ client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 
 
 def run(task: str):
+    mode = os.environ.get('PROJECT_DRIVER_MODE', 'planning')
     response = client.responses.create(
         model=os.environ.get('OPENAI_MODEL', 'gpt-5.1'),
         input=[
             {
                 'role': 'system',
-                'content': f'''You are the PROJECTTRACK Project Driver Agent.\n\nProject context:\n{project}\n\nBe concise, structured, and actionable.'''
+                'content': f'''You are the PROJECTTRACK Project Driver Agent.\n\nProject context:\n{project}\n\nOperating mode: {mode}\n\nFor pull request reviews, evaluate:\n- architecture fit\n- implementation clarity\n- security risk\n- maintainability\n- missing tests/docs\n- project roadmap alignment\n\nBe concise, structured, and actionable.'''
             },
             {
                 'role': 'user',
