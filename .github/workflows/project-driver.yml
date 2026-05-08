@@ -7,9 +7,16 @@ on:
         description: Project driver task
         required: false
 
+  issues:
+    types: [opened]
+
 jobs:
   run-agent:
     runs-on: ubuntu-latest
+
+    permissions:
+      issues: write
+      contents: read
 
     steps:
       - name: Checkout
@@ -27,6 +34,9 @@ jobs:
       - name: Run Project Driver
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          PROJECT_DRIVER_TASK: ${{ github.event.inputs.task }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_ISSUE_NUMBER: ${{ github.event.issue.number }}
+          PROJECT_DRIVER_TASK: ${{ github.event.inputs.task || github.event.issue.title }}
         run: |
           python agents/project_driver/agent.py
