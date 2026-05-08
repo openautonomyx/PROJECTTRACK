@@ -4,11 +4,13 @@ from pydantic import BaseModel
 from planning_engine import generate_plan
 from publishers import ApprovalRequiredPublisher
 from approval_workflow import ApprovalWorkflow
+from status_reporter import StatusReporter
 
 
 app = FastAPI(title='PROJECTTRACK Project Manager API')
 publisher = ApprovalRequiredPublisher()
 approvals = ApprovalWorkflow()
+reporter = StatusReporter()
 
 
 class PlanRequest(BaseModel):
@@ -52,6 +54,20 @@ def reject_plan(draft_id: str, req: RejectRequest):
     return approvals.reject(draft_id, reason=req.reason)
 
 
+@app.get('/snapshot')
+def snapshot():
+    return reporter.generate_snapshot()
+
+
+@app.post('/snapshot/export')
+def export_snapshot():
+    path = reporter.export_markdown()
+    return {
+        'status': 'exported',
+        'path': str(path),
+    }
+
+
 @app.get('/status')
 def status():
     return {
@@ -59,4 +75,5 @@ def status():
         'mode': 'provider-neutral',
         'core_model': 'ProjectPlan',
         'approval_workflow': 'enabled',
+        'status_reporting': 'enabled',
     }
