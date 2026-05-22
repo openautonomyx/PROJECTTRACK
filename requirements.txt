@@ -2,3 +2,5 @@ requests
 pandas
 pytest
 twine
+fastapi
+uvicorn[standard]
